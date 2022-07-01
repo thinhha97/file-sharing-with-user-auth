@@ -48,7 +48,7 @@ router.post('/register', async (req, res) => {
     })
     await newUser.save()
     const mailOptions = {
-      from: 'thinhha.dev@gmail.com',
+      from: process.env.MAIL_USERNAME,
       to: `${email}`,
       subject: 'File sharing account activation needed',
       html: `<h4>Hi.</h4><br/>I am Thinh Ha at <a href="${req.protocol}://${req.headers.host}">FileSharing</a><br/>
@@ -56,7 +56,6 @@ router.post('/register', async (req, res) => {
       <a href="${req.protocol}://${req.headers.host}/users/verify/${newUser._id}"><button style="background-color: green; border: 0.2rem solid black; border-radius: 3%;">Verify Account</button></a>
       <p>if above button does not work. please copy and paste link below to your browser's address bar.</p><br/>
       <p>${req.protocol}://${req.headers.host}/users/verify/${newUser._id}</p>`,
-      // text: `Hi. I am Thinh Ha at FileSharing. Please follow ${req.headers.host}/users/verify/${newUser._id}`,
     }
     nodeMailerTransporter.sendMail(mailOptions, (err, data) => {
       if (err) {
