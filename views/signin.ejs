@@ -97,26 +97,28 @@
   </head>
   <body class="text-center bg-dark text-white">
     <main class="form-signin w-100 m-auto">
-      <form>
+      <form action="/users/signin" method="post">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
         <div class="text-danger"><%- include('partials/messages') %></div>
         <div class="form-floating text-dark">
           <input
             type="email"
             class="form-control"
-            id="floatingInput"
+            id="email"
+            name="email"
             placeholder="name@example.com"
           />
-          <label for="floatingInput">Email address</label>
+          <label for="email">Email address</label>
         </div>
         <div class="form-floating text-dark">
           <input
             type="password"
             class="form-control"
-            id="floatingPassword"
+            id="password"
+            name="password"
             placeholder="Password"
           />
-          <label for="floatingPassword">Password</label>
+          <label for="password">Password</label>
         </div>
 
         <div class="checkbox mb-3">
@@ -128,9 +130,13 @@
           Sign in
         </button>
         <div>
-          <span>Forgot your password?</span> <a href="/users/password-reset">Reset password</a>
+          <span>Forgot your password?</span>
+          <a href="/users/password-reset">Reset password</a>
         </div>
-        <div><span>Don't have an account?</span> <a href="/users/signup">Sign up</a></div>
+        <div>
+          <span>Don't have an account?</span>
+          <a href="/users/signup">Sign up</a>
+        </div>
         <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p>
       </form>
     </main>
