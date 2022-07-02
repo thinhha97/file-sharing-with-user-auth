@@ -1,10 +1,15 @@
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 const User = require('../models/user')
 const Token = require('../models/token')
+const cookie =require('cookie')
+const encryption = require('../utils/encryption')
 
 const nodeMailerTransporter = require('../utils/nodemailer/transporter')
+
+const JWT_TOKEN_SECRET = process.env.JWT_TOKEN_SECRET
 
 router.get('/', (req, res) => {
   res.status(200).json({ message: 'user route' })
@@ -95,8 +100,14 @@ router.post('/signin', async (req, res) => {
     res.render('signin', { errors, email, password })
     return
   }
-  
 
+  const token = jwt.sign(user._id.toString(), JWT_TOKEN_SECRET)
+  user.lastLogin = new Date()
+  await user.save()
+
+  res.setHeader('Set-Cookie', cookie.serialize('jwt', token, { path: '/'}))
+  
+  res.redirect('/')
 })
 
 router.get('/verify/:id', async (req, res) => {
@@ -198,11 +209,17 @@ router.all('/password-reset/:id/:token', async (req, res) => {
     return
   } else {
     if (!password === password2) {
-      res.render('password-reset', {input: {userId: user._id, token}, errors: [{msg: `Password do not match.`}]})
+      res.render('password-reset', {
+        input: { userId: user._id, token },
+        errors: [{ msg: `Password do not match.` }],
+      })
       return
     }
     if (password.length < 6) {
-      res.render('password-reset', {input: {userId: user._id, token}, errors: [{msg: `Password must be more than 6 characters.`}]})
+      res.render('password-reset', {
+        input: { userId: user._id, token },
+        errors: [{ msg: `Password must be more than 6 characters.` }],
+      })
       return
     }
     const salt = await bcrypt.genSalt(12)
@@ -210,7 +227,9 @@ router.all('/password-reset/:id/:token', async (req, res) => {
     user.password = hashedPasswword
     await user.save()
     await authToken.delete()
-    res.render('signin', { errors: [{msg: `Your password has been changed successfully.`}]})
+    res.render('signin', {
+      errors: [{ msg: `Your password has been changed successfully.` }],
+    })
   }
 })
 
