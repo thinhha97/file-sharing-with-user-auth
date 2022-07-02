@@ -62,8 +62,9 @@ router.post('/register', async (req, res) => {
         console.error(`Error sending mail` + err)
       }
     })
-    const message = 'Your account has been created. Please check your email for verify instruction.'
-    res.render('verify', {message})
+    const message =
+      'Your account has been created. Please check your email for verify instruction.'
+    res.render('login', { errors: [{ msg: message }] })
   }
 })
 
@@ -99,14 +100,14 @@ router.get('/verify/:id', async (req, res) => {
   const user = await User.findById(id)
   let message
   if (!user) {
-    message = 'User not found'
-    res.render('verify', { message })
+    message = `There's a problem verifying your account :(((`
+    res.render('login', { errors: [{msg: message}] })
     return
   } else {
     user.verified = true
     await user.save()
-    message = 'Your account has been successfully activated.'
-    res.render('verify', { message })
+    message = 'Your account has been successfully activated. You can now log in.'
+    res.render('login', { errors: [{ msg: message }] })
     return
   }
 })
