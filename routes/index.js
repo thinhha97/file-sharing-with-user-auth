@@ -1,8 +1,8 @@
 const router = require('express').Router()
+const authenticateToken = require('../middlewares/authenticateToken')
 
-router.get('/', (req, res) => {
-  let input = {message: 'Please enter your email to reset password'}
-  res.render('password-reset', { input })
+router.get('/', authenticateToken, (req, res) => {
+  res.render('index')
 })
 
 router.use('/users', require('./users'))
